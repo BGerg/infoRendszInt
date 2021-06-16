@@ -36,6 +36,7 @@ def main():
                 body=color_approval
                 )
 
+
             for item in messages:
                 if (item == color_approval):
                     messages.remove(color_approval)
