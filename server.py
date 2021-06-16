@@ -11,31 +11,37 @@ def main():
     color_statistics_channel = connection.channel()
     color_statistics_channel.queue_declare(queue='/queue/colorStatistics')
 
-
     messages = []
-
     def callback(ch, method, properties, body):
         messages.append(body)
-        print(" [x] Received %r" % body)
-        if len(messages) == 10:
+        print(
+            f"""Statistics:
+            - RED: {len([c for c in messages if c == b"RED"])}
+            - BLUE: {len([c for c in messages if c == b"BLUE"])}
+            - GREEN: {len([c for c in messages if c == b"GREEN"])}
+            """
+        )
+
+        color_approval = ""
+        if len([c for c in messages if c == b"RED"]) == 10:
+            color_approval = "RED"
+        elif len([c for c in messages if c == b"BLUE"]) == 10:
+            color_approval = "BLUE"
+        elif len([c for c in messages if c == b"GREEN"]) == 10:
+            color_approval = "GREEN"
+        if color_approval != "":
             color_statistics_channel.basic_publish(
                 exchange='',
                 routing_key='/queue/colorStatistics',
-                body=
-                f"""Statistics:
-                - RED: {len([c for c in messages if c == b"RED"])}
-                - BLUE: {len([c for c in messages if c == b"BLUE"])}
-                - GREEN: {len([c for c in messages if c == b"GREEN"])}
-                """
-            )
-            # print(
-            #     f"""Statistics:
-            #     - RED: {len([c for c in messages if c == b"RED"])}
-            #     - BLUE: {len([c for c in messages if c == b"BLUE"])}
-            #     - GREEN: {len([c for c in messages if c == b"GREEN"])}
-            #     """
-            # )
-            messages.clear()
+                body=color_approval
+                )
+
+            for item in messages:
+                if (item == color_approval):
+                    messages.remove(color_approval)
+            print(len(messages))
+        #messages.clear()
+
 
     color_channel.basic_consume(
         queue='/queue/colorQueue',

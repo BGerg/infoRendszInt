@@ -1,12 +1,11 @@
 from random import randint
 from time import sleep
-
 import pika
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
 
-channel.queue_declare(queue='hello')
+channel.queue_declare(queue='/queue/colorQueue')
 
 
 class Color:
