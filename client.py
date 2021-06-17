@@ -25,7 +25,7 @@ for i in range(20):
     color = color_repo[randint(1, 3)]
     channel.basic_publish(exchange='', routing_key='/queue/colorQueue', body=color)
     print(f" [x] Sent '{color}'")
-    sleep(0.1)
+    sleep(1)
 
 connection.close()
 
